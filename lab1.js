@@ -11,15 +11,15 @@ const asyncMap = (array, callback, finishingCallback, delay) => {
   for (const item of array) {
     const startTime = Date.now();
     callback(item, (value) => {
-      const elapsedTime = Date.now() - startTime;
-      const remainingTime = delay - elapsedTime;
+      const elapsedTime = Date.now() - startTime; //час що минув після обчислення squareNums
+      const remainingTime = delay - elapsedTime; // час, що залишився після завершення squareNums
       const handleResult = () => {
         result.push(value);
         completed++;
         if (completed === array.length) finishingCallback(result);
       };
       if (remainingTime > 0) {
-        setTimeout(handleResult, 100);
+        setTimeout(handleResult, 100); //support for debounce(additional executing delay)
       }
     });
   }
