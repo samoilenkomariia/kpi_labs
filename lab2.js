@@ -14,7 +14,7 @@ const asyncMap = (array, ms) => {
 
 const squareNums = (num) => {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(num * num), 100);
+    setTimeout(() => resolve(num * num), 1000);
   });
 };
 
@@ -24,5 +24,45 @@ asyncMap(nums, 100).then((result) => console.log(result));
 //async await based use case
 (async () => {
   const result = await asyncMap(nums, 100);
+  console.log(result);
+})();
+
+//add support for parallelism
+const asyncMapWithParallelism = (array, ms, limit = array.length) => {
+  return new Promise((resolve) => {
+    const result = [];
+    let activeTasks = 0; //num of active tasks
+    let index = 0; //track the next item to process
+
+    const processNext = () => {
+      if (result.length === array.length && !activeTasks) {
+        resolve(result); //if finished going through array resolve
+        return;
+      }
+      while (activeTasks < limit && index < array.length) {
+        const currentIndex = index++;
+        activeTasks++;
+
+        squareNums(array[currentIndex])
+          .then((value) => {
+            result[currentIndex] = value;
+          })
+          .catch((error) => {
+            result[currentIndex] = null;
+            console.error(error.message);
+          })
+          .finally(() => {
+            activeTasks--;
+            processNext();
+          });
+      }
+    };
+
+    setTimeout(processNext, ms);
+  });
+};
+
+(async () => {
+  const result = await asyncMapWithParallelism(nums, 100, 2);
   console.log(result);
 })();
