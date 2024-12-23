@@ -42,7 +42,7 @@ const asyncMap = ( //асинхронна реалізація array.map(x => x*
 
 const squareNums = (num, done) => {
   setTimeout(() => {
-    done(null, num * num); //те саме що array.map(x => x*x)
+    done(null, num * num); //oбчислення num*num
   }, 50);
 };
 
