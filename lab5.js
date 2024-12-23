@@ -25,3 +25,8 @@ emitter.on("message", (message) => {
 emitter.on("message", (message) => {
   console.log("Second listener received:", message);
 });
+
+setTimeout(() => {
+  clearInterval(intervalId);
+  emitter.removeAllListeners();
+}, 5000);
