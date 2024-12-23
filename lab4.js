@@ -28,12 +28,16 @@ const fs = require("fs");
 const readline = require("readline");
 
 const fetchDataFromFile = async function* (filePath) {
-  const fileStream = fs.createReadStream(filePath);
-  const rl = readline.createInterface({ input: fileStream });
+  try {
+    const fileStream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({ input: fileStream });
 
-  for await (const line of rl) {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    yield JSON.parse(line);
+    for await (const line of rl) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      yield JSON.parse(line);
+    }
+  } catch (error) {
+    console.error("Error reading file:", error.message);
   }
 };
 
