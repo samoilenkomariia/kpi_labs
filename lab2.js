@@ -18,4 +18,11 @@ const squareNums = (num) => {
   });
 };
 
+//promise based use case
 asyncMap(nums, 100).then((result) => console.log(result));
+
+//async await based use case
+(async () => {
+  const result = await asyncMap(nums, 100);
+  console.log(result);
+})();
