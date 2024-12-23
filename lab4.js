@@ -32,9 +32,13 @@ const fetchDataFromFile = async function* (filePath) {
     const fileStream = fs.createReadStream(filePath);
     const rl = readline.createInterface({ input: fileStream });
 
-    for await (const line of rl) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      yield JSON.parse(line);
+    try {
+      for await (const line of rl) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        yield JSON.parse(line);
+      }
+    } finally {
+      fileStream.close();
     }
   } catch (error) {
     console.error("Error reading file:", error.message);
