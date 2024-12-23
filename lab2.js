@@ -2,14 +2,19 @@
 
 const nums = [5, 2, 7, 3, 4];
 
-const asyncMap = (array, ms, result = []) => {
-  return new Promise((resolve) => {
+const asyncMap = (array, ms) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      for (const item of array) {
-        result.push(item * item);
-      }
-      resolve(result);
+      const promises = array.map((item) => squareNums(item));
+
+      Promise.all(promises).then(resolve).catch(reject);
     }, ms);
+  });
+};
+
+const squareNums = (num) => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(num * num), 100);
   });
 };
 
