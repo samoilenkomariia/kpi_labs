@@ -6,13 +6,6 @@ const data = [
   { id: 3, value: "item3" },
 ];
 
-const data2 = [
-  [1, 2],
-  [2, 3],
-  [4, 5],
-  [5, 6],
-];
-
 const fetchData = async function* (data) {
   for (const item of data) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -28,4 +21,27 @@ const processData = async (data) => {
 };
 
 processData(data);
-processData(data2);
+
+//using generator to read file content line by line
+
+const fs = require("fs");
+const readline = require("readline");
+
+const fetchDataFromFile = async function* (filePath) {
+  const fileStream = fs.createReadStream(filePath);
+  const rl = readline.createInterface({ input: fileStream });
+
+  for await (const line of rl) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    yield JSON.parse(line);
+  }
+};
+
+const processDataFromFile = async (filePath) => {
+  const dataGenerator = fetchDataFromFile(filePath);
+  for await (const item of dataGenerator) {
+    console.log("Processing:", item);
+  }
+};
+
+processDataFromFile("example.jsonl");
