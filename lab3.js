@@ -11,24 +11,34 @@ const asyncMap = (array, ms, signal) => {
       reject(new Error("asyncMap aborted"));
       return;
     }
-    setTimeout(() => {
-      const promises = array.map((item) => squareNums(item));
+    const promises = array.map((item) => squareNums(item, signal));
 
-      Promise.all(promises).then(resolve).catch(reject);
-    }, ms);
+    Promise.all(promises)
+      .then(resolve)
+      .catch((error) => {
+        if (signal?.aborted) {
+          reject(new Error("asyncMap aborted"));
+        } else {
+          reject(error);
+        }
+      });
+
+    setTimeout(() => {}, ms);
   });
 };
 
 const squareNums = (num, signal) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const timeoutID = setTimeout(() => {
-      if (signal?.aborted) reject(new Error("squareNum aborted"));
-      else resolve(num * num);
+      if (signal?.aborted) {
+        reject(new Error("squareNums aborted"));
+      }
+      resolve(num * num);
     }, 1000);
 
     signal?.addEventListener("abort", () => {
       clearTimeout(timeoutID);
-      reject(new Error("squareNum aborted"));
+      reject(new Error("squareNums aborted"));
     });
   });
 };
@@ -36,7 +46,7 @@ const squareNums = (num, signal) => {
 setTimeout(() => controller.abort(), 500);
 
 //promise based use case
-asyncMap(nums, 100)
+asyncMap(nums, 100, signal)
   .then((result) => console.log(result))
   .catch((error) => console.error(error.message));
 
