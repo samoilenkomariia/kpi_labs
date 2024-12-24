@@ -4,7 +4,8 @@ const nums = [5, 2, 7, 3, 4];
 
 // console.log(nums.map((x) => x * x)); ф-ція яку я обрала
 
-const asyncMap = ( //асинхронна реалізація array.map(x => x*x)
+const asyncMap = (
+  //асинхронна реалізація array.map(x => x*x)
   array, //масив цифр nums
   callback, //підставлятиметься ф-ція для обчислення num*num
   finishingCallback, //фінальний колбек який викликається в самому кінці для виводу result
@@ -14,35 +15,35 @@ const asyncMap = ( //асинхронна реалізація array.map(x => x*
   const result = [];
   let completed = 0; //для контролю обходу по масиву
 
-  for (const [index, item] of array.entries()) { //обхід по масиву nums
-    const startTime = Date.now(); //запис часу початку роботи колбеку
+  for (const [index, item] of array.entries()) {
+    const startTime = Date.now();
 
     callback(item, (error, value) => {
-      const elapsedTime = Date.now() - startTime; //час що минув після обчислення value
-      const remainingTime = delay - elapsedTime; //час, що залишився від очікування delay
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = delay - elapsedTime;
 
       if (error) {
         onError(error, item);
-        result[index] = null; //null на місце проблемного item
+        result[index] = null;
         completed++;
-        if (completed === array.length) finishingCallback(result); //якщо масив пройдено до кінця - виклик фінального колбеку
-        return; //early exit if error occurs
+        if (completed === array.length) finishingCallback(result);
+        return;
       }
       const handleResult = () => {
         result[index] = value;
         completed++;
-        if (completed === array.length) finishingCallback(result); //якщо масив пройдено до кінця - виклик фінального колбеку
+        if (completed === array.length) finishingCallback(result);
       };
       if (remainingTime > 0) {
         setTimeout(handleResult, 100); //support for debounce(additional executing delay)
-      } else handleResult(); 
+      } else handleResult();
     });
   }
 };
 
 const squareNums = (num, done) => {
   setTimeout(() => {
-    done(null, num * num); //oбчислення num*num
+    done(null, num * num);
   }, 50);
 };
 
