@@ -5,15 +5,14 @@ const nums = [5, 2, 7, 3, 4];
 // console.log(nums.map((x) => x * x)); ф-ція яку я обрала
 
 const asyncMap = (
-  //асинхронна реалізація array.map(x => x*x)
-  array, //масив цифр nums
-  callback, //підставлятиметься ф-ція для обчислення num*num
-  finishingCallback, //фінальний колбек який викликається в самому кінці для виводу result
-  delay, //int число мілісекунд для затримки
+  array,
+  callback,
+  finishingCallback,
+  delay,
   onError = console.error
 ) => {
   const result = [];
-  let completed = 0; //для контролю обходу по масиву
+  let completed = 0;
 
   for (const [index, item] of array.entries()) {
     const startTime = Date.now();
