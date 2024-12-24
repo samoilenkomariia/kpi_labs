@@ -1,16 +1,10 @@
 "use strict";
 
-const nums = [5, 2, 7, 3, 4];
+const nums = [5, 2, 7, "fd", 4];
 
 // console.log(nums.map((x) => x * x)); ф-ція яку я обрала
 
-const asyncMap = (
-  array,
-  callback,
-  finishingCallback,
-  delay,
-  onError = console.error
-) => {
+const asyncMap = (array, callback, finishingCallback, delay, onError) => {
   const result = [];
   let completed = 0;
 
@@ -34,7 +28,7 @@ const asyncMap = (
         if (completed === array.length) finishingCallback(result);
       };
       if (remainingTime > 0) {
-        setTimeout(handleResult, 100); //support for debounce(additional executing delay)
+        setTimeout(handleResult, remainingTime);
       } else handleResult();
     });
   }
@@ -42,8 +36,9 @@ const asyncMap = (
 
 const squareNums = (num, done) => {
   setTimeout(() => {
-    done(null, num * num);
-  }, 50);
+    if (typeof num === "number") done(null, num * num);
+    else done(new Error("is not a number"), null);
+  }, 500);
 };
 
 //demo for debounce with no errors
@@ -53,19 +48,4 @@ asyncMap(
   (result) => console.log(result),
   100,
   (error, item) => console.error(`Error on item ${item}`, error.message)
-);
-
-//demo for error handling
-asyncMap(
-  nums,
-  (num, done) => {
-    setTimeout(() => {
-      num === 7
-        ? done(new Error("Failed on num 7"), null) //simulate an error on item 7
-        : done(null, num * num);
-    }, 50);
-  },
-  (result) => console.log(result),
-  100,
-  (error, item) => error.message
 );
