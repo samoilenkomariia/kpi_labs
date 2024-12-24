@@ -1,6 +1,6 @@
 "use strict";
 
-const nums = [5, 2, 7, 3, 4];
+const nums = [5, 2, "df", 3, 4];
 
 const asyncMap = (array, ms) => {
   return new Promise((resolve, reject) => {
@@ -13,8 +13,12 @@ const asyncMap = (array, ms) => {
 };
 
 const squareNums = (num) => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(num * num), 1000);
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (typeof num === "number") resolve(num * num);
+      else
+        reject(new Error(`Error on  item ${num}, probably invalid datatype`));
+    }, 1000);
   });
 };
 
