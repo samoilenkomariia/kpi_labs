@@ -1,51 +1,38 @@
 "use strict";
 
-const nums = [5, 2, 7, "fd", 4];
+const nums = [5, 2, 7, "sa", "sd"];
 
 // console.log(nums.map((x) => x * x)); ф-ція яку я обрала
-
-const asyncMap = (array, callback, finishingCallback, delay, onError) => {
-  const result = [];
+function asyncMap(array, squareF, callback, delay) {
+  let results = [];
   let completed = 0;
 
-  for (const [index, item] of array.entries()) {
-    const startTime = Date.now();
-
-    callback(item, (error, value) => {
-      const elapsedTime = Date.now() - startTime;
-      const remainingTime = delay - elapsedTime;
-
-      if (error) {
-        onError(error, item);
-        result[index] = null;
+  for (let i = 0; i < array.length; i++) {
+    try {
+      if (typeof array[i] === "number") {
+        results[i] = squareF(array[i]);
         completed++;
-        if (completed === array.length) finishingCallback(result);
-        return;
+        if (completed === array.length) callback(null, results);
+      } else {
+        throw new Error(`${array[i]} is NaN`);
       }
-      const handleResult = () => {
-        result[index] = value;
-        completed++;
-        if (completed === array.length) finishingCallback(result);
-      };
-      if (remainingTime > 0) {
-        setTimeout(handleResult, remainingTime);
-      } else handleResult();
-    });
+    } catch (err) {
+      callback(err);
+      return;
+    }
+    setTimeout(() => {}, delay);
   }
-};
+}
 
-const squareNums = (num, done) => {
-  setTimeout(() => {
-    if (typeof num === "number") done(null, num * num);
-    else done(new Error("is not a number"), null);
-  }, 500);
-};
-
-//demo for debounce with no errors
 asyncMap(
   nums,
-  squareNums,
-  (result) => console.log(result),
-  100,
-  (error, item) => console.error(`Error on item ${item}`, error.message)
+  (x) => x * x,
+  (err, result) => {
+    if (err) {
+      console.error("Error:", err);
+    } else {
+      console.log("Result:", result);
+    }
+  },
+  500
 );
