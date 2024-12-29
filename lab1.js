@@ -1,6 +1,6 @@
 "use strict";
 
-const nums = [5, 4, "sd", 3, 9];
+const nums = [5, 4, 4, 3, 9];
 
 function asyncMap(array, transformer, callback) {
   let results = [];
@@ -36,7 +36,7 @@ function asyncMap(array, transformer, callback) {
 
 const squareF = (data, index, array, cb) => {
   setTimeout(() => {
-    if (typeof data === "number") {
+    if (typeof data !== "number") {
       cb(null, new Error(`incorrect datatype ${index}`));
     } else {
       cb(data * data);
