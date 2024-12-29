@@ -7,47 +7,45 @@ const nums2 = [5, 4, 7, 3, 9];
 function asyncMap(array, transformer, callback, delay) {
   let results = [];
   let completed = 0;
+  let isErr = false;
 
+  if (completed === array.length) {
+    callback(results);
+    return;
+  }
   for (let i = 0; i < array.length; i++) {
-    try {
-      if (typeof array[i] === "number") {
-        transformer(array[i], (err, result) => {
-          if (err) {
-            callback(err);
-            return;
-          }
-          results[i] = result;
-          completed++;
-
-          if (completed === array.length) {
-            callback(null, results);
-          }
-        });
-      } else {
-        throw new Error(`${array[i]} is NaN`);
-      }
-    } catch (err) {
-      callback(err);
-      return;
+    if (isErr) return;
+    if (typeof array[i] !== "number") {
+      return callback(new Error(`${array[i]} is NaN`), null);
     }
+
+    transformer(array[i], i, array, (err, result) => {
+      if (err) {
+        isErr = true;
+        return callback(err);
+      }
+
+      results[i] = result;
+      completed++;
+
+      if (completed === array.length) callback(null, results);
+    });
     setTimeout(() => {}, delay);
   }
 }
 
-const squareF = (data, callback) => {
-  try {
-    callback(null, data * data);
-  } catch (err) {
-    callabck(err);
-  }
+const squareF = (data, index, array, cb) => {
+  setTimeout(() => {
+    cb(null, data * data);
+  }, 500);
 };
 
 asyncMap(
-  nums2,
+  nums,
   squareF,
   (err, result) => {
     if (err) {
-      throw err;
+      console.error(err);
     } else {
       console.log("Result:", result);
     }
