@@ -1,18 +1,28 @@
 "use strict";
 
 const nums = [5, 2, 7, "sa", "sd"];
+const nums2 = [5, 4, 7, 3, 9];
 
 // console.log(nums.map((x) => x * x)); ф-ція яку я обрала
-function asyncMap(array, squareF, callback, delay) {
+function asyncMap(array, transformer, callback, delay) {
   let results = [];
   let completed = 0;
 
   for (let i = 0; i < array.length; i++) {
     try {
       if (typeof array[i] === "number") {
-        results[i] = squareF(array[i]);
-        completed++;
-        if (completed === array.length) callback(null, results);
+        transformer(array[i], (err, result) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+          results[i] = result;
+          completed++;
+
+          if (completed === array.length) {
+            callback(null, results);
+          }
+        });
       } else {
         throw new Error(`${array[i]} is NaN`);
       }
@@ -24,12 +34,20 @@ function asyncMap(array, squareF, callback, delay) {
   }
 }
 
+const squareF = (data, callback) => {
+  try {
+    callback(null, data * data);
+  } catch (err) {
+    callabck(err);
+  }
+};
+
 asyncMap(
-  nums,
-  (x) => x * x,
+  nums2,
+  squareF,
   (err, result) => {
     if (err) {
-      console.error("Error:", err);
+      throw err;
     } else {
       console.log("Result:", result);
     }
